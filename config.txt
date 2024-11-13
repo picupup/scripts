@@ -1,0 +1,13 @@
+list_commen=(
+	scr.sh
+	docker-rm-all-containers.sh
+	docker-prune.sh
+	pe.sh) 
+list_server=(
+	create-bare-repo.sh 
+	remove-user.sh
+	create-user.sh
+	create-group-or-add-to.sh
+	remove-from-group.sh)
+list_local=(changetheme.sh)
+list_skel=(.gitconfig)
