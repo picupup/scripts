@@ -59,9 +59,14 @@ echo "Version $year"
 printconfig "${year}" > texlive.profile
 
 nohup {
-./install-tl -profile texlive.profile;
-ls -f ~/.bashrc 2>/dev/null && echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bashrc || \
-    ls -f ~/.bash_profile && echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bash_profile;
+    ./install-tl -profile texlive.profile;
+
+    if [ -f ~/.bashrc ]; then
+        echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bashrc;
+    elif [ -f ~/.bash_profile ]; then
+        echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bash_profile;
+    fi
+
 } &> /tmp/installtlmg.log &
 
 echo "Process id is $?"
