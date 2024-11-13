@@ -31,7 +31,7 @@ function printconfig {
     TEXMFSYSCONFIG $HOME/texlive/${lversion}/texmf-config
     TEXMFSYSVAR $HOME/texlive/${lversion}/texmf-var
     TEXMFVAR ~/.texlive${lversion}/texmf-var
-    $(get_binary_name)    
+    $(get_binary_name)
     instopt_adjustpath 0
     instopt_adjustrepo 1
     instopt_letter 0
