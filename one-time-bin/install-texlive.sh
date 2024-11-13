@@ -3,10 +3,19 @@
 # AUTHOR: erfan-main 
 # DATE: 2024-11-12T17:46:55
 # REV: 1.0
-# PURPOSE: It installs the current tex
+# PURPOSE: It installs the current texlive
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
 
+function get_binary_name {
+        if [[ "$OSTYPE" == "darwin"* ]]; then
+                # macOS
+                echo -n 'binary_universal-darwin 1'
+        else
+                # Linux or other UNIX-like systems
+                echo -n 'binary_x86_64-linux 1'
+        fi
+}
 
 function printconfig {
     local lversion=$1
@@ -22,7 +31,7 @@ function printconfig {
     TEXMFSYSCONFIG $HOME/texlive/${lversion}/texmf-config
     TEXMFSYSVAR $HOME/texlive/${lversion}/texmf-var
     TEXMFVAR ~/.texlive${lversion}/texmf-var
-    binary_x86_64-linux 1
+    $(get_binary_name)    
     instopt_adjustpath 0
     instopt_adjustrepo 1
     instopt_letter 0
@@ -58,20 +67,26 @@ year="${version:0:4}"
 echo "Version $year"
 printconfig "${year}" > texlive.profile
 
-nohup {
-    ./install-tl -profile texlive.profile;
 
-    if [ -f ~/.bashrc ]; then
-        echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bashrc;
-    elif [ -f ~/.bash_profile ]; then
-        echo 'export PATH=$PATH:/usr/local/texlive/2024/bin/x86_64-linux' >> ~/.bash_profile;
-    fi
-
-} &> /tmp/installtlmg.log &
-
+nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
 echo "Process id is $?"
 
-echo "The output can Be seen in /tmp/installtlmg.log"
+if [[ "$OSTYPE" == "darwin*" ]]; then
+        bindir='universal-darwin'
+else
+        bindir='x86_64-linux'
+fi
+
+path="/usr/local/texlive/${year}/bin/${bindir}"
+if [ -f ~/.bashrc -a -z "$(grep "${path}" ~/.bashrc 2>/dev/null)" ]; then
+        echo "setting up path in ~/.bashrc"
+        echo 'export PATH=$PATH:'${path} >> ~/.bashrc;
+elif [ -f ~/.bash_profile -a -z "$(grep "${path}" ~/.bash_profile 2>/dev/null)"  ]; then
+        echo "setting up path in ~/.bash_profile"
+        echo 'export PATH=$PATH:'${path} >> ~/.bash_profile;
+fi
+
+echo "The output can be seen in /tmp/installtlmg.log"
 echo "The instalation process has started. It is running in the background, so you could close the terminal and see the process in estimately 2 hours..."
 
 
