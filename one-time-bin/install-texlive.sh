@@ -71,7 +71,7 @@ printconfig "${year}" > texlive.profile
 nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
 echo "Process id is $?"
 
-if [[ "$OSTYPE" == "darwin*" ]]; then
+if [[ "$OSTYPE" == "darwin"* ]]; then
         bindir='universal-darwin'
 else
         bindir='x86_64-linux'
