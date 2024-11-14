@@ -4,6 +4,7 @@
 # DATE: 2024-11-12T17:46:55
 # REV: 1.0
 # PURPOSE: It installs the current texlive
+# GITHUB_URL: https://raw.githubusercontent.com/picupup/scripts/refs/heads/main/one-time-bin/install-texlive.sh
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
 
@@ -18,19 +19,17 @@ function get_binary_name {
 }
 
 function printconfig {
-    local lversion=$1
-
     echo "# texlive.profile written on $(date '+%F %T')
     # It will NOT be updated and reflects only the
     # installation profile at installation time.
     selected_scheme scheme-full
-    TEXDIR ~/texlive/${lversion}
+    TEXDIR ${installdir}
     TEXMFCONFIG ~/.texlive/${lversion}/texmf-config
     TEXMFHOME ~/texmf
-    TEXMFLOCAL ~/texlive/texmf-local
-    TEXMFSYSCONFIG ~/texlive/${lversion}/texmf-config
-    TEXMFSYSVAR ~/texlive/${lversion}/texmf-var
-    TEXMFVAR ~/.texlive/${lversion}/texmf-var
+    TEXMFLOCAL ${installbasedir}/texmf-local
+    TEXMFSYSCONFIG ${installdir}/texmf-config
+    TEXMFSYSVAR ${installdir}/texmf-var
+    TEXMFVAR ${installdir}/texmf-var
     $(get_binary_name)
     instopt_adjustpath 0
     instopt_adjustrepo 1
@@ -54,6 +53,10 @@ function printconfig {
 
 # ------------------------------------------
 
+
+userhomedir="$(echo ~)"
+installbasedir="${1:-"${userhomedir}/texlive"}"
+
 dir=$(mktemp -d)
 echo created $dir
 
@@ -62,14 +65,18 @@ cd $dir
 curl -LO http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 tar -xzf install-tl-unx.tar.gz
 cd $(ls -d */)
+
 version="${PWD##*-}"
 year="${version:0:4}"
 echo "Version $year"
-printconfig "${year}" > texlive.profile
+installdir="${installbasedir}/${year}"
+
+printconfig > texlive.profile
 
 
 nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
-echo "Process id is $?"
+process="$?"
+echo "Process id is $process"
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
         bindir='universal-darwin'
@@ -77,7 +84,7 @@ else
         bindir='x86_64-linux'
 fi
 
-path="/usr/local/texlive/${year}/bin/${bindir}"
+path="${installdir}/bin/${bindir}"
 if [ -f ~/.bashrc -a -z "$(grep "${path}" ~/.bashrc 2>/dev/null)" ]; then
         echo "setting up path in ~/.bashrc"
         echo 'export PATH=$PATH:'${path} >> ~/.bashrc;
@@ -86,5 +93,7 @@ elif [ -f ~/.bash_profile -a -z "$(grep "${path}" ~/.bash_profile 2>/dev/null)" 
         echo 'export PATH=$PATH:'${path} >> ~/.bash_profile;
 fi
 
+echo "The instalation process has started in '${installdir}'."
+echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
+echo "The Backgroup-process-id is: ${process}"
 echo "The output can be seen in /tmp/installtlmg.log"
-echo "The instalation process has started. It is running in the background, so you could close the terminal and see the process in estimately 2 hours..."
