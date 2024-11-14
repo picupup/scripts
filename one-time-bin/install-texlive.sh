@@ -24,13 +24,13 @@ function printconfig {
     # It will NOT be updated and reflects only the
     # installation profile at installation time.
     selected_scheme scheme-full
-    TEXDIR $HOME/texlive/${lversion}
-    TEXMFCONFIG ~/.texlive${lversion}/texmf-config
+    TEXDIR ~/texlive/${lversion}
+    TEXMFCONFIG ~/.texlive/${lversion}/texmf-config
     TEXMFHOME ~/texmf
-    TEXMFLOCAL $HOME/texlive/texmf-local
-    TEXMFSYSCONFIG $HOME/texlive/${lversion}/texmf-config
-    TEXMFSYSVAR $HOME/texlive/${lversion}/texmf-var
-    TEXMFVAR ~/.texlive${lversion}/texmf-var
+    TEXMFLOCAL ~/texlive/texmf-local
+    TEXMFSYSCONFIG ~/texlive/${lversion}/texmf-config
+    TEXMFSYSVAR ~/texlive/${lversion}/texmf-var
+    TEXMFVAR ~/.texlive/${lversion}/texmf-var
     $(get_binary_name)
     instopt_adjustpath 0
     instopt_adjustrepo 1
@@ -88,5 +88,3 @@ fi
 
 echo "The output can be seen in /tmp/installtlmg.log"
 echo "The instalation process has started. It is running in the background, so you could close the terminal and see the process in estimately 2 hours..."
-
-
