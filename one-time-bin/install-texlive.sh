@@ -91,7 +91,10 @@ if hasFlag "-f" "$@"; then
 else
         nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
         process="$?"
-        echo "Process id is $process"
+        echo "The instalation process has started in '${installdir}'."
+        echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
+        echo "The Backgroup-process-id is: ${process}"
+        echo "The output can be seen in /tmp/installtlmg.log"
 fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
@@ -108,8 +111,3 @@ elif [ -f ~/.bash_profile -a -z "$(grep "${path}" ~/.bash_profile 2>/dev/null)" 
         echo "setting up path in ~/.bash_profile"
         echo 'export PATH=$PATH:'${path} >> ~/.bash_profile;
 fi
-
-echo "The instalation process has started in '${installdir}'."
-echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
-echo "The Backgroup-process-id is: ${process}"
-echo "The output can be seen in /tmp/installtlmg.log"
