@@ -113,10 +113,10 @@ if [ "$(id -u)" -eq 0 ]; then
         # Root user: configure system-wide
         echo "Configuring system-wide PATH, MANPATH, and INFOPATH for root..."
 
-        if [ -f /etc/profile ] && [ -z "$(grep "${path}" /etc/profile)" ]; then
+        if [ -f /etc/profile ] && grep -q "${path}" /etc/profile; then
         echo "export PATH=${path}:\$PATH" >> /etc/profile
         fi
-        if [ -f /etc/manpath.config ] && [ -z "$(grep "${manpath}" /etc/manpath.config)" ]; then
+        if [ -f /etc/manpath.config ] && grep -q "${manpath}" /etc/manpath.config; then
         echo "MANPATH_MAP ${manpath}" >> /etc/manpath.config
         fi
 
@@ -132,11 +132,11 @@ EOF
 else
         # Non-root user: configure user-specific
         echo "Configuring PATH, MANPATH, and INFOPATH for current user..."
-        if [ -f ~/.bashrc ] && [ -z "$(grep "${path}" ~/.bashrc)" ]; then
+        if [ -f ~/.bashrc ] && grep -q "${path}" ~/.bashrc; then
         echo "export PATH=${path}:\$PATH" >> ~/.bashrc
         echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bashrc
         echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bashrc
-        elif [ -f ~/.bash_profile ] && [ -z "$(grep "${path}" ~/.bash_profile)" ]; then
+        elif [ -f ~/.bash_profile ] && grep -q "${path}" ~/.bash_profile; then
         echo "export PATH=${path}:\$PATH" >> ~/.bash_profile
         echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bash_profile
         echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bash_profile
