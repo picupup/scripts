@@ -157,7 +157,12 @@ else
         echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bash_profile
         echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bash_profile
         fi
+
 fi
+
+export PATH=${path}:$PATH
+export MANPATH=${manpath}:$MANPATH
+export INFOPATH=${infopath}:$INFOPATH
 
 # < --------------- Setting path ----------------------------
 
