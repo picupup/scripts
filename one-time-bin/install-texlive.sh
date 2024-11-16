@@ -97,17 +97,53 @@ else
         echo "The output can be seen in /tmp/installtlmg.log"
 fi
 
+# --------------- Setting path ---------------------------- >
+
 if [[ "$OSTYPE" == "darwin"* ]]; then
-        bindir='universal-darwin'
+    bindir='universal-darwin'
 else
-        bindir='x86_64-linux'
+    bindir='x86_64-linux'
 fi
 
 path="${installdir}/bin/${bindir}"
-if [ -f ~/.bashrc -a -z "$(grep "${path}" ~/.bashrc 2>/dev/null)" ]; then
-        echo "setting up path in ~/.bashrc"
-        echo 'export PATH=$PATH:'${path} >> ~/.bashrc;
-elif [ -f ~/.bash_profile -a -z "$(grep "${path}" ~/.bash_profile 2>/dev/null)"  ]; then
-        echo "setting up path in ~/.bash_profile"
-        echo 'export PATH=$PATH:'${path} >> ~/.bash_profile;
+manpath="${installdir}/texmf-dist/doc/man"
+infopath="${installdir}/texmf-dist/doc/info"
+
+if [ "$(id -u)" -eq 0 ]; then
+        # Root user: configure system-wide
+        echo "Configuring system-wide PATH, MANPATH, and INFOPATH for root..."
+
+        if [ -f /etc/profile ] && [ -z "$(grep "${path}" /etc/profile)" ]; then
+        echo "export PATH=${path}:\$PATH" >> /etc/profile
+        fi
+        if [ -f /etc/manpath.config ] && [ -z "$(grep "${manpath}" /etc/manpath.config)" ]; then
+        echo "MANPATH_MAP ${manpath}" >> /etc/manpath.config
+        fi
+
+        # Create script in /etc/profile.d
+        echo "Creating script in /etc/profile.d/texlive.sh"
+        cat <<EOF > /etc/profile.d/texlive.sh
+export PATH=${path}:\$PATH
+export MANPATH=${manpath}:\$MANPATH
+export INFOPATH=${infopath}:\$INFOPATH
+EOF
+        chmod -R a+rX /usr/local/texlive
+        chmod +x /etc/profile.d/texlive.sh
+else
+        # Non-root user: configure user-specific
+        echo "Configuring PATH, MANPATH, and INFOPATH for current user..."
+        if [ -f ~/.bashrc ] && [ -z "$(grep "${path}" ~/.bashrc)" ]; then
+        echo "export PATH=${path}:\$PATH" >> ~/.bashrc
+        echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bashrc
+        echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bashrc
+        elif [ -f ~/.bash_profile ] && [ -z "$(grep "${path}" ~/.bash_profile)" ]; then
+        echo "export PATH=${path}:\$PATH" >> ~/.bash_profile
+        echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bash_profile
+        echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bash_profile
+        fi
 fi
+
+# < --------------- Setting path ----------------------------
+
+cd 
+rm -rf "${dir}"
