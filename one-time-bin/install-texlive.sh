@@ -2,7 +2,6 @@
 # SCRIPT: install-texlive.sh
 # AUTHOR: erfan-main 
 # DATE: 2024-11-12T17:46:55
-# REV: 1.0
 # PURPOSE: It installs the current texlive
 # GITHUB_URL: https://raw.githubusercontent.com/picupup/scripts/refs/heads/main/one-time-bin/install-texlive.sh
 # FLAGS: 
@@ -73,7 +72,7 @@ function get-flag-value {
 
   for ((i = 0; i < $#; i++)); do
     if [ "${!i}" = "${flag}" ]; then
-        next_i=$((i +1));
+        next_i=$((i + 1));
       echo "${!next_i}"
       return 0  # Return success if the flag is found
     fi
