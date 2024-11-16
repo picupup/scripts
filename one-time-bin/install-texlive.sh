@@ -6,6 +6,7 @@
 # PURPOSE: It installs the current texlive
 # GITHUB_URL: https://raw.githubusercontent.com/picupup/scripts/refs/heads/main/one-time-bin/install-texlive.sh
 # FLAGS: 
+#       -p : path: Recommended, and default, is "$HOME/texlive" or manually set to "/usr/local/texlive" if you have root access.
 #       -f : run in forground
 #
 # set -x # Uncomment to debug
@@ -66,10 +67,26 @@ function hasFlag {
   return 1
 }
 
+function get-flag-value {
+  local flag="$1"
+  shift
+
+  for ((i = 0; i < $#; i++)); do
+    if [ "${!i}" = "${flag}" ]; then
+        next_i=$((i +1));
+      echo "${!next_i}"
+      return 0  # Return success if the flag is found
+    fi
+  done
+
+  return 1  # Return failure if the flag isn't found
+}
+
 # ------------------------------------------
 
 userhomedir="$(echo ~)"
-installbasedir="${1:-"${userhomedir}/texlive"}"
+flag_p="$(get-flag-value -p "$@" 2>/dev/null)"
+installbasedir="${flag_p:-"${userhomedir}/texlive"}"
 
 dir=$(mktemp -d)
 cd $dir
