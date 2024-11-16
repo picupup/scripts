@@ -5,6 +5,9 @@
 # REV: 1.0
 # PURPOSE: It installs the current texlive
 # GITHUB_URL: https://raw.githubusercontent.com/picupup/scripts/refs/heads/main/one-time-bin/install-texlive.sh
+# FLAGS: 
+#       -f : run in forground
+#
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
 
@@ -51,16 +54,26 @@ function printconfig {
     tlpdbopt_w32_multi_user 1"
 }
 
-# ------------------------------------------
+function hasFlag {
+  local flag="$1"
+  shift
 
+  for arg in "$@"; do
+    if test "${arg}" = "${flag}"; then
+      return 0
+    fi
+  done
+  return 1
+}
+
+# ------------------------------------------
 
 userhomedir="$(echo ~)"
 installbasedir="${1:-"${userhomedir}/texlive"}"
 
 dir=$(mktemp -d)
-echo created $dir
-
 cd $dir
+echo created $dir
 
 curl -LO http://mirror.ctan.org/systems/texlive/tlnet/install-tl-unx.tar.gz
 tar -xzf install-tl-unx.tar.gz
@@ -73,10 +86,13 @@ installdir="${installbasedir}/${year}"
 
 printconfig > texlive.profile
 
-
-nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
-process="$?"
-echo "Process id is $process"
+if hasFlag "-f" "$@"; then
+        ./install-tl -profile texlive.profile
+else
+        nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
+        process="$?"
+        echo "Process id is $process"
+fi
 
 if [[ "$OSTYPE" == "darwin"* ]]; then
         bindir='universal-darwin'
