@@ -8,7 +8,7 @@
 #       -p : path: Recommended, and default, is "$HOME/texlive" or manually set to "/usr/local/texlive" if you have root access.
 #       -f : run in forground
 #
-# set -x # Uncomment to debug
+set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
 
 function get_binary_name {
@@ -102,16 +102,16 @@ installdir="${installbasedir}/${year}"
 
 printconfig > texlive.profile
 
-if hasFlag "-f" "$@"; then
-        ./install-tl -profile texlive.profile
-else
-        nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
-        process="$?"
-        echo "The instalation process has started in '${installdir}'."
-        echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
-        echo "The Backgroup-process-id is: ${process}"
-        echo "The output can be seen in /tmp/installtlmg.log"
-fi
+# if hasFlag "-f" "$@"; then
+#         ./install-tl -profile texlive.profile
+# else
+#         nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
+#         process="$?"
+#         echo "The instalation process has started in '${installdir}'."
+#         echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
+#         echo "The Backgroup-process-id is: ${process}"
+#         echo "The output can be seen in /tmp/installtlmg.log"
+# fi
 
 # --------------- Setting path ---------------------------- >
 
@@ -125,39 +125,32 @@ path="${installdir}/bin/${bindir}"
 manpath="${installdir}/texmf-dist/doc/man"
 infopath="${installdir}/texmf-dist/doc/info"
 
+allpathes="export PATH=${path}:\$PATH\nexport MANPATH=${manpath}:\$MANPATH\nexport INFOPATH=${infopath}:\$INFOPATH"
+
 if [ "$(id -u)" -eq 0 ]; then
         # Root user: configure system-wide
         echo "Configuring system-wide PATH, MANPATH, and INFOPATH for root..."
 
-        if [ -f /etc/profile ] && grep -q "${path}" /etc/profile; then
-        echo "export PATH=${path}:\$PATH" >> /etc/profile
+        if [ -f /etc/profile ] && ! grep -q "${path}" /etc/profile; then
+                echo "export PATH=${path}:\$PATH" >> /etc/profile
         fi
-        if [ -f /etc/manpath.config ] && grep -q "${manpath}" /etc/manpath.config; then
-        echo "MANPATH_MAP ${manpath}" >> /etc/manpath.config
+        if [ -f /etc/manpath.config ] && ! grep -q "${manpath}" /etc/manpath.config; then
+                echo "MANPATH_MAP ${manpath}" >> /etc/manpath.config
         fi
 
         # Create script in /etc/profile.d
         echo "Creating script in /etc/profile.d/texlive.sh"
-        cat <<EOF > /etc/profile.d/texlive.sh
-export PATH=${path}:\$PATH
-export MANPATH=${manpath}:\$MANPATH
-export INFOPATH=${infopath}:\$INFOPATH
-EOF
+        echo -e ${allpathes} > /etc/profile.d/texlive.sh
         chmod -R a+rX /usr/local/texlive
         chmod +x /etc/profile.d/texlive.sh
 else
         # Non-root user: configure user-specific
         echo "Configuring PATH, MANPATH, and INFOPATH for current user..."
-        if [ -f ~/.bashrc ] && grep -q "${path}" ~/.bashrc; then
-        echo "export PATH=${path}:\$PATH" >> ~/.bashrc
-        echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bashrc
-        echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bashrc
-        elif [ -f ~/.bash_profile ] && grep -q "${path}" ~/.bash_profile; then
-        echo "export PATH=${path}:\$PATH" >> ~/.bash_profile
-        echo "export MANPATH=${manpath}:\$MANPATH" >> ~/.bash_profile
-        echo "export INFOPATH=${infopath}:\$INFOPATH" >> ~/.bash_profile
+        if [ -f ~/.bashrc ] && ! grep -q "${path}" ~/.bashrc; then
+                echo -e ${allpathes} >> ~/.bashrc
+        elif [ -f ~/.bash_profile ] && ! grep -q "${path}" ~/.bash_profile; then
+                echo -e ${allpathes}  >> ~/.bash_profile
         fi
-
 fi
 
 export PATH=${path}:$PATH
