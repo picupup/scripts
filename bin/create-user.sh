@@ -22,7 +22,7 @@ fi
 
 
 echo "-- Creating ssh identity"
-sudo -u ${user} ssh-keygen -N "" -f /home/${user}/.ssh/id_rsa
+# sudo -u ${user} ssh-keygen -N "" -f /home/${user}/.ssh/id_rsa
 sudo -u "${user}" ssh-keygen -t ed25519 -N "" -f /home/${user}/.ssh/id_ed25519 <<<"y"
 
 [ -z "$(which pwgen)" ] 2>/dev/null &&  { echo "-- pwgen does not exists. Will install it."; sudo apt-get install pwgen; }
