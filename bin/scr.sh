@@ -4,6 +4,7 @@
 # DATE: 2021-08-25_20:39:56
 # REV: 1.0
 # PURPOSE: Creates bash script if the file name ends with '.sh' or nothing. And adds user and time specific comments at the beginning.
+# ARGUMENTS: 1: Optional -f adds function and Main section to the script
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
 
@@ -32,12 +33,14 @@ space="			"
 cat > ${fi} << END 
 #!/usr/bin/env bash
 # SCRIPT: $(basename $fi) 
-# AUTHOR: $USER 
+# AUTHOR: ...
 # DATE: $(date '+%FT%T')
 # REV: 1.0
 # PURPOSE: ...
+# ARGUMENTS: 1: 	2:		3:		4:
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
+# set -e # Break on the first failure
 END
 
 # F stands for the full version or extra information
