@@ -5,8 +5,7 @@
 # PURPOSE: It installs the current texlive
 # GITHUB_URL: https://raw.githubusercontent.com/picupup/scripts/refs/heads/main/one-time-bin/install-texlive.sh
 # FLAGS: 
-#       -p : path: Recommended, and default, is "$HOME/texlive" or manually set to "/usr/local/texlive" if you have root access.
-#       -f : run in forground
+#       -p : path: Recommended, and default, is "$HOME/texlive" or set it to "/usr/local/texlive" if you have root access.
 #
 set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
@@ -102,16 +101,7 @@ installdir="${installbasedir}/${year}"
 
 printconfig > texlive.profile
 
-# if hasFlag "-f" "$@"; then
-#         ./install-tl -profile texlive.profile
-# else
-#         nohup ./install-tl -profile texlive.profile &> /tmp/installtlmg.log &
-#         process="$?"
-#         echo "The instalation process has started in '${installdir}'."
-#         echo "It is running in the background, so you can close the terminal and wait for estimately 2 hours for it to finish."
-#         echo "The Backgroup-process-id is: ${process}"
-#         echo "The output can be seen in /tmp/installtlmg.log"
-# fi
+./install-tl -profile texlive.profile
 
 # --------------- Setting path ---------------------------- >
 
