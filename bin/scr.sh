@@ -3,7 +3,7 @@
 # AUTHOR: erfankarimi
 # DATE: 2021-08-25T20:39:56
 # REV: 1.0
-# ARGUMENTS: 1: Optional -f adds function and Main section to the script
+# ARGUMENTS: [1: Optional -f adds function and Main section to the script]
 #
 # PURPOSE: Creates bash script if the file name ends with '.sh' or nothing.
 # 	  And adds user and time specific comments at the beginning.
@@ -39,7 +39,7 @@ cat > ${fi} << END
 # AUTHOR: ...
 # DATE: $(date '+%FT%T')
 # REV: 1.0
-# ARGUMENTS: 1: 	2:		3:		4:
+# ARGUMENTS: [1:        ][2:		][3:		][4:        ]
 #
 # PURPOSE: ...
 #
