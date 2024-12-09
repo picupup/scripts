@@ -56,4 +56,5 @@ fi
 
 chmod u+x $fi
 
-vim -c '$' $fi
+# vim -c '$' $fi
+vim +8 $fi
