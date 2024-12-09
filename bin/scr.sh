@@ -28,12 +28,12 @@ END
 
 ##########################################################################################
 
-fi=$1
+fi="$1"
 flag="$2"
 line="============================================================"
 space="			"
 
-cat > ${fi} << END 
+cat > "${fi}" << END 
 #!/usr/bin/env bash
 # SCRIPT: $(basename $fi) 
 # AUTHOR: ...
@@ -41,7 +41,7 @@ cat > ${fi} << END
 # REV: 1.0
 # ARGUMENTS: [1:        ][2:		][3:		][4:        ]
 #
-# PURPOSE: ...
+# PURPOSE: 
 #
 # set -x # Uncomment to debug
 # set -n # Uncomment to check script syntax without execution
@@ -56,5 +56,7 @@ fi
 
 chmod u+x $fi
 
+# Moves cursor to the end of file
 # vim -c '$' $fi
-vim +8 $fi
+# Moves cursor to the end of line 8, to write the purpose of the script
+vim +8 +"normal! $\|startinsert" "$fi"
